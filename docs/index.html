@@ -112,7 +112,7 @@
             color: white;
         }
 
-        /* Header */
+        /* Header - FIXED FOR MOBILE */
         header {
             background-color: rgba(241, 248, 233, 0.95);
             backdrop-filter: blur(10px);
@@ -186,7 +186,7 @@
             color: var(--text);
         }
 
-        /* Mobile Navigation */
+        /* Mobile Navigation - IMPROVED */
         @media (max-width: 768px) {
             nav ul {
                 position: fixed;
@@ -198,11 +198,13 @@
                 background-color: var(--background);
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                gap: 40px;
+                justify-content: flex-start;
+                padding-top: 80px;
+                gap: 30px;
                 transition: right 0.3s ease;
                 box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
                 z-index: 100;
+                overflow-y: auto;
             }
 
             nav ul.active {
@@ -220,6 +222,12 @@
                 font-size: 1.5rem;
                 cursor: pointer;
                 color: var(--text);
+                z-index: 102;
+            }
+            
+            /* Prevent body scroll when menu is open */
+            body.menu-open {
+                overflow: hidden;
             }
         }
 
@@ -823,7 +831,7 @@
                         <li><a href="#themes">Themes</a></li>
                         <li><a href="#screenshots">Screenshots</a></li>
                         <li><a href="#testimonials">Testimonials</a></li>
-                        <div class="close-menu" id="close-menu">✕</div>
+                        <li class="close-menu" id="close-menu">✕</li>
                     </ul>
                 </nav>
                 <div class="mobile-menu" id="mobile-menu">☰</div>
@@ -1077,24 +1085,39 @@
     </footer>
 
     <script>
-        // Mobile menu toggle
+        // Mobile menu toggle - IMPROVED
         const mobileMenu = document.getElementById('mobile-menu');
         const navMenu = document.getElementById('nav-menu');
         const closeMenu = document.getElementById('close-menu');
+        const body = document.body;
 
         mobileMenu.addEventListener('click', function() {
             navMenu.classList.add('active');
+            body.classList.add('menu-open');
         });
 
         closeMenu.addEventListener('click', function() {
             navMenu.classList.remove('active');
+            body.classList.remove('menu-open');
         });
 
         // Close menu when clicking on a link
         document.querySelectorAll('nav a').forEach(link => {
             link.addEventListener('click', function() {
                 navMenu.classList.remove('active');
+                body.classList.remove('menu-open');
             });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = navMenu.contains(event.target);
+            const isClickOnMobileMenu = mobileMenu.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnMobileMenu && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
         });
 
         // Smooth scrolling for anchor links
